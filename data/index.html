@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Smart Cricket Bat Impact Detector</title>
+  <style>
+    body { font-family: Arial, sans-serif; background: #f8f9fa; margin: 0; }
+    .container {
+      max-width: 760px;
+      margin: 40px auto;
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 0 16px #ccc;
+      padding: 38px 34px 40px 34px;
+    }
+    h2 {
+      text-align: center;
+      margin-top: 0;
+      margin-bottom: 25px;
+    }
+    .bat-details-row {
+      display: flex;
+      align-items: flex-start;
+    }
+    .bat-area {
+      position: relative;
+      width: 340px;
+      height: 540px;
+      margin-right: 24px;
+      background: #fafafa;
+    }
+    .bat-img {
+      position: absolute;
+      left: 50%;
+      top: 0;
+      transform: translateX(-50%);
+      width: 98%;
+      height: 95%;
+      object-fit: fill;
+      filter: drop-shadow(2px 2px 8px #888);
+      user-select: none;
+      pointer-events: none;
+    }
+    .impact-marker {
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 70%;
+      height: 80px;
+      opacity: 0.3;
+      border-radius: 24px;
+      pointer-events: none;
+      display: none;
+    }
+    .top {
+      top: 220px;
+      background: #ff5722;
+      border: 2px solid #ff5722;
+      display: block;
+    }
+    .middle {
+      top: 292px;
+      background: #4caf50;
+      border: 2px solid #388e3c;
+      display: block;
+    }
+    .bottom {
+      top: 375px;
+      background: #1976d2;
+      border: 2px solid #1976d2;
+      display: block;
+    }
+    .details {
+      flex: 1;
+      padding-top: 30px;
+      padding-left: 12px;
+      color: #222;
+    }
+    .label {
+      font-weight: bold;
+      font-size: 1.13em;
+      margin: 12px 0 2px 0;
+      color: #222;
+    }
+    .value {
+      font-family: "Roboto Mono", monospace;
+      font-size: 1.07em;
+      margin-bottom: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Smart Cricket Bat Impact Detector</h2>
+    <div class="bat-details-row">
+      <div class="bat-area">
+        <img src="image.png" class="bat-img" alt="Cricket Bat" />
+        <div class="impact-marker top" id="markerTop"></div>
+        <div class="impact-marker middle" id="markerMiddle"></div>
+        <div class="impact-marker bottom" id="markerBottom"></div>
+      </div>
+      <div class="details">
+        <div class="label">Impact Region:</div>
+        <div class="value" id="regionValue">Middle (Sweet Spot)</div>
+        <div class="label">Bat Angle (Pitch):</div>
+        <div class="value" id="angleValue">-16.4&deg;</div>
+        <div class="label">Y-Axis Rotation Speed:</div>
+        <div class="value" id="speedValue">824 deg/s</div>
+      </div>
+    </div>
+  </div>
+<script>
+// Helper: highlight only the current marker
+function showMarker(region) {
+  document.getElementById('markerTop').style.display = (region === "top") ? "block" : "none";
+  document.getElementById('markerMiddle').style.display = (region === "middle") ? "block" : "none";
+  document.getElementById('markerBottom').style.display = (region === "bottom") ? "block" : "none";
+}
+
+function updateLiveData() {
+  fetch('/data')
+    .then(resp => resp.json())
+    .then(data => {
+      // Highlight the proper marker
+      showMarker(data.region);
+      // Update values
+      document.getElementById('regionValue').textContent = 
+        data.region === "top" ? "Top (Near Handle)" : 
+        data.region === "middle" ? "Middle (Sweet Spot)" : "Bottom (Toe)";
+      document.getElementById('angleValue').textContent = data.angle.toFixed(2) + '°';
+      document.getElementById('speedValue').textContent = data.speed.toFixed(2) + ' deg/s';
+    })
+    .catch(e => {
+      // If /data not reachable, don't throw
+    });
+}
+setInterval(updateLiveData, 300);
+window.onload = updateLiveData;
+</script>
+</body>
+</html>
