@@ -103,4 +103,4 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ### Author
 
-- **Arun Kumar Mohanta** - National Institute of Technology, Warangal
+- **Andaluri Balavardhan** - National Institute of Technology, Warangal
